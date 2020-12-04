@@ -11,7 +11,7 @@ import { TasksMap } from './map';
 import { HeaderLine } from '../projectDetail/header';
 import { Button } from '../button';
 import Portal from '../portal';
-import { SidebarIcon } from '../svgIcons';
+import { SidebarIcon, InfoIcon } from '../svgIcons';
 import { openEditor, getTaskGpxUrl, formatImageryUrl } from '../../utils/openEditor';
 import { TaskHistory } from './taskActivity';
 import { ChangesetCommentTags } from './changesetComment';
@@ -46,6 +46,9 @@ export function TaskMapAction({ project, projectIsReady, tasks, activeTasks, act
     `projects/${project.projectId}/tasks/${tasksIds[0]}/`,
     project.projectId && tasksIds && tasksIds.length === 1,
   );
+
+  const taskHistoryPresent =
+    taskHistory && taskHistory.taskHistory && taskHistory.taskHistory.length > 1;
 
   const getTaskGpxUrlCallback = useCallback((project, tasks) => getTaskGpxUrl(project, tasks), []);
   const formatImageryUrlCallback = useCallback((imagery) => formatImageryUrl(imagery), []);
@@ -171,6 +174,14 @@ export function TaskMapAction({ project, projectIsReady, tasks, activeTasks, act
                 </h3>
                 <DueDateBox dueDate={timer} align="left" intervalMili={60000} />
               </div>
+              {taskHistoryPresent && activeSection !== 'history' && (
+                <div class="flex items-center justify-center pa1 bg-grey-light blue-grey">
+                  <InfoIcon />
+                  <span class="ml2 fw1 pa1">
+                    <FormattedMessage {...messages.readTaskComments} />
+                  </span>
+                </div>
+              )}
               <div className="cf">
                 <div className="cf ttu barlow-condensed f4 pv2 blue-dark">
                   <span
@@ -197,16 +208,14 @@ export function TaskMapAction({ project, projectIsReady, tasks, activeTasks, act
                       onClick={() => setActiveSection('history')}
                     >
                       <FormattedMessage {...messages.history} />
-                      {taskHistory &&
-                        taskHistory.taskHistory &&
-                        taskHistory.taskHistory.length > 1 && (
-                          <div
-                            className="bg-red white dib br-100 tc f6 ml1 mb1 v-mid"
-                            style={{ height: '1.125rem', width: '1.125rem' }}
-                          >
-                            {taskHistory.taskHistory.length}
-                          </div>
-                        )}
+                      {taskHistoryPresent && (
+                        <div
+                          className="bg-red white dib br-100 tc f6 ml1 mb1 v-mid"
+                          style={{ height: '1.125rem', width: '1.125rem' }}
+                        >
+                          {taskHistory.taskHistory.length}
+                        </div>
+                      )}
                     </span>
                   )}
                 </div>
